@@ -91,3 +91,7 @@ if __name__ == "__main__":
     print(list(combined.keys()))  # 输出 ['d', 'b', 'c', 'a', 'e']
     # 虽然看上去从右到左是保留了第二个字典的值，但是实际上是保留了第一个字典的值
     print(list(combined.values()))  # 输出 [5, 20, 4, 1, 6]
+    a = (x * x for x in range(100))
+    b = [x for x in a]
+    print(type(a), a.__sizeof__())  # <class 'generator'> 184
+    print(type(b), b.__sizeof__())  # <class 'list'> 904
