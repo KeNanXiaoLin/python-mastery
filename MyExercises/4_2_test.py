@@ -60,7 +60,6 @@ class Dog(Mammal):
 
 print("\n创建Dog实例:")
 buddy = Dog("Buddy", "brown", "Golden Retriever")
-
 print(f"\nbuddy.speak(): {buddy.speak()}")
 print(f"buddy.move(): {buddy.move()}")
 print(f"buddy.feed_milk(): {buddy.feed_milk()}")
@@ -148,18 +147,19 @@ print("\n菱形继承示例:")
 
 
 class PoweredDevice:
-    def __init__(self, power_source):
+    def __init__(self, power_source, **kwargs):
         print(f"  PoweredDevice.__init__: {power_source}")
         self.power_source = power_source
+        super().__init__(**kwargs)  # 传递剩余的关键字参数
 
     def turn_on(self):
         return "Powered device turns on"
 
 
 class Scanner(PoweredDevice):
-    def __init__(self, power_source, dpi):
+    def __init__(self, power_source, dpi, **kwargs):
         print(f"  Scanner.__init__")
-        super().__init__(power_source)  # 使用super()
+        super().__init__(power_source, **kwargs)  # 使用super()
         self.dpi = dpi
 
     def turn_on(self):
@@ -168,9 +168,9 @@ class Scanner(PoweredDevice):
 
 
 class Printer(PoweredDevice):
-    def __init__(self, power_source, pages_per_minute):
+    def __init__(self, power_source, pages_per_minute, **kwargs):
         print(f"  Printer.__init__")
-        super().__init__(power_source)  # 使用super()
+        super().__init__(power_source, **kwargs)  # 使用super()
         self.pages_per_minute = pages_per_minute
 
     def turn_on(self):
@@ -182,7 +182,7 @@ class MultiFunctionDevice(Scanner, Printer):
     def __init__(self, power_source, dpi, pages_per_minute):
         print(f"  MultiFunctionDevice.__init__")
         # 只调用一次super()，但会协调所有父类
-        super().__init__(power_source, dpi, pages_per_minute)
+        super().__init__(power_source, dpi=dpi, pages_per_minute=pages_per_minute)
 
     def turn_on(self):
         result = super().turn_on()
@@ -194,12 +194,12 @@ mfd = MultiFunctionDevice("AC", 1200, 30)
 
 print(f"\nmfd.turn_on(): {mfd.turn_on()}")
 print(f"mfd实例属性: {mfd.__dict__}")
+print(Printer.__dict__)
 
 # 查看MRO
 print(f"\nMultiFunctionDevice.__mro__:")
 for i, cls in enumerate(MultiFunctionDevice.__mro__):
     print(f"  {i}. {cls.__name__}")
-
 
 # ============================================================================
 # 第三部分：super()的深入理解
@@ -250,7 +250,6 @@ print(f"D.__mro__中B之后是: {D.__mro__[D.__mro__.index(B)+1]}")
 print(
     f"所以B中的super().method()调用的是: {D.__mro__[D.__mro__.index(B)+1].__name__}.method()"
 )
-
 
 # ============================================================================
 # 第四部分：继承设计的黄金法则
@@ -318,26 +317,25 @@ print(f"处理结果: '{result}'")
 
 print("\n\n法则3: 必须一致使用super()")
 
-
 class Component:
-    def __init__(self, id):
+    def __init__(self, id, **kwargs):
         print(f"  Component.__init__: {id}")
         self.id = id
 
 
 class NetworkComponent(Component):
-    def __init__(self, id, ip_address):
+    def __init__(self, id, ip_address, **kwargs):
         print(f"  NetworkComponent.__init__: {id}")
         # ✅ 正确: 使用super()
-        super().__init__(id)
+        super().__init__(id, **kwargs)
         self.ip_address = ip_address
 
 
 class SecureComponent(Component):
-    def __init__(self, id, encryption_key):
+    def __init__(self, id, encryption_key, **kwargs):
         print(f"  SecureComponent.__init__: {id}")
         # ✅ 正确: 使用super()
-        super().__init__(id)
+        super().__init__(id, **kwargs)
         self.encryption_key = encryption_key
 
 
@@ -345,7 +343,7 @@ class SecureNetworkComponent(NetworkComponent, SecureComponent):
     def __init__(self, id, ip_address, encryption_key):
         print(f"  SecureNetworkComponent.__init__: {id}")
         # 只需调用一次super()，会自动协调所有父类
-        super().__init__(id, ip_address, encryption_key)
+        super().__init__(id, ip_address=ip_address, encryption_key=encryption_key)
 
 
 print("\n创建SecureNetworkComponent实例:")

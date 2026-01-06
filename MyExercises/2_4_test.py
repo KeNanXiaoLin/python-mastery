@@ -1,5 +1,7 @@
 import sys
 
+class Person:
+    pass
 
 if __name__ == "__main__":
     a = 100
@@ -8,3 +10,5 @@ if __name__ == "__main__":
     print(sys.getsizeof(b))  # 24
     c = "H"
     print(sys.getsizeof(c))  # 62
+    p1 = Person()
+    print("__init__" in Person.__dict__)  # False
